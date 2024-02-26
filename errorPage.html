@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-git.js"></script>
+  </head>
+  <body>
+    <h1>Login failed, click the button to return to the login</h1>
+    <div class="redirect">
+      <button>Take me back</button>
+    </div>
+    <script>
+      $("button").click(function () {
+        $(".redirect").text("Redirecting....");
+        setTimeout(() => {
+          location = "http://localhost:5500";
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

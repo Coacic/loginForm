@@ -5,6 +5,7 @@ let path = require("path");
 const bodyParser = require("body-parser");
 const { count } = require("console");
 var passwordHash = require("password-hash");
+let struct;
 
 router.use(bodyParser.urlencoded({ extended: false }));
 
@@ -14,7 +15,7 @@ let con = mysql.createConnection({
   password: "password",
 });
 
-con.connect(function (err) {
+con.connect((err) => {
   if (err) throw err;
   console.log("Connected!");
 });
@@ -23,7 +24,7 @@ router.get("/main", (req, res) => {
   res.sendFile(path.join(__dirname, "../main.html"));
 });
 
-router.get("/", function (req, res) {
+router.get("/", (req, res) => {
   // res.send("<h1>Welcome to /</h1>");
   // res.send("Welcome to /")
   res.sendFile(path.join(__dirname, "../index.html"));
@@ -63,7 +64,7 @@ router.get("/userRegisteredAlready", (req, res) => {
   res.sendFile(path.join(__dirname, "../userRegisteredAlready.html"));
 });
 
-router.post("/", async function (req, pos) {
+router.post("/", async (req, pos) => {
   let user = req.body.username;
   if (!Boolean(user.match(/^[A-Za-z0-9]*$/))) {
     pos.redirect("/badUsername");
@@ -81,6 +82,7 @@ router.post("/", async function (req, pos) {
     ("0" + (date.getMonth() + 1)).slice(-2) +
     "-" +
     ("0" + date.getDate()).slice(-2);
+  struct = [user, submit, count, dateString];
   console.log(dateString);
 
   //'SELECT COUNT(*) from loginform.user u, loginform.pass p WHERE u.idUser = p.idPassword AND u.username="' +
@@ -91,7 +93,7 @@ router.post("/", async function (req, pos) {
 
   switch (submit) {
     case "login":
-      let queryPromiseLogin = new Promise(function (resolve, reject) {
+      let queryPromiseLogin = new Promise((resolve, reject) => {
         con.query(
           `SELECT password as password FROM loginform.users u, loginform.pass p WHERE u.idUser = p.idPassword AND u.username="` +
             user +
@@ -115,7 +117,7 @@ router.post("/", async function (req, pos) {
 
     case "register":
       let generatedPass = passwordHash.generate(pass);
-      let queryPromiseRegister = new Promise(function (resolve, reject) {
+      let queryPromiseRegister = new Promise((resolve, reject) => {
         con.query(
           'SELECT p.password as password FROM loginform.users u, loginform.pass p WHERE u.idUser = p.idPassword AND u.username="' +
             user +
@@ -134,10 +136,7 @@ router.post("/", async function (req, pos) {
         pos.redirect("/userRegisteredAlready");
       } else {
         //Count max users
-        let QueryPromiseRegisterCountUsers = new Promise(function (
-          resolve,
-          reject
-        ) {
+        let QueryPromiseRegisterCountUsers = new Promise((resolve, reject) => {
           con.query(
             "SELECT COUNT(*) as count FROM loginform.users",
             (err, result, fields) => {
@@ -151,7 +150,7 @@ router.post("/", async function (req, pos) {
           await QueryPromiseRegisterCountUsers;
 
         //Register the user
-        let QueryPromiseRegisterUser = new Promise(function (resolve, reject) {
+        let QueryPromiseRegisterUser = new Promise((resolve, reject) => {
           con.query(
             `INSERT INTO loginform.users VALUES(` +
               count +
@@ -168,10 +167,7 @@ router.post("/", async function (req, pos) {
           );
         });
         //Register the password
-        let QueryPromiseRegisterPassword = new Promise(function (
-          resolve,
-          reject
-        ) {
+        let QueryPromiseRegisterPassword = new Promise((resolve, reject) => {
           con.query(
             `INSERT INTO loginform.pass VALUES(` +
               count +
@@ -187,7 +183,7 @@ router.post("/", async function (req, pos) {
         let promiseQueryPromiseRegisterPassword =
           await QueryPromiseRegisterPassword;
         //Add basic level for the user
-        let QueryPromiseRegisterLevel = new Promise(function (resolve, reject) {
+        let QueryPromiseRegisterLevel = new Promise((resolve, reject) => {
           con.query(
             `INSERT INTO loginform.levels VALUES(` + count + `, ` + 1 + `)`,
             (err, result, fields) => {
@@ -216,4 +212,5 @@ router.get("*", (req, res) => {
   res.send("<h1>Wrong url :/</h1>");
 });
 
+module.exports = struct;
 module.exports = router;

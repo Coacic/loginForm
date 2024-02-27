@@ -5,7 +5,7 @@ let path = require("path");
 const bodyParser = require("body-parser");
 const { count } = require("console");
 var passwordHash = require("password-hash");
-let struct;
+let struct = ["user", "password"];
 
 router.use(bodyParser.urlencoded({ extended: false }));
 
@@ -85,7 +85,7 @@ router.post("/", async (req, pos) => {
   struct = [user, submit, count, dateString];
   console.log(dateString);
 
-  //'SELECT COUNT(*) from loginform.user u, loginform.pass p WHERE u.idUser = p.idPassword AND u.username="' +
+  //'SELECT COUNT(*) from loginform.user u, loginform.passwords p WHERE u.idUser = p.idPassword AND u.username="' +
   // user +
   // '" AND p.password="' +
   // pass +
@@ -95,7 +95,7 @@ router.post("/", async (req, pos) => {
     case "login":
       let queryPromiseLogin = new Promise((resolve, reject) => {
         con.query(
-          `SELECT password as password FROM loginform.users u, loginform.pass p WHERE u.idUser = p.idPassword AND u.username="` +
+          `SELECT password as password FROM loginform.users u, loginform.passwords p WHERE u.idUser = p.idPassword AND u.username="` +
             user +
             `"`,
           (err, result, fields) => {
@@ -119,7 +119,7 @@ router.post("/", async (req, pos) => {
       let generatedPass = passwordHash.generate(pass);
       let queryPromiseRegister = new Promise((resolve, reject) => {
         con.query(
-          'SELECT p.password as password FROM loginform.users u, loginform.pass p WHERE u.idUser = p.idPassword AND u.username="' +
+          'SELECT p.password as password FROM loginform.users u, loginform.passwords p WHERE u.idUser = p.idPassword AND u.username="' +
             user +
             '"',
           (err, result, fields) => {
@@ -169,7 +169,7 @@ router.post("/", async (req, pos) => {
         //Register the password
         let QueryPromiseRegisterPassword = new Promise((resolve, reject) => {
           con.query(
-            `INSERT INTO loginform.pass VALUES(` +
+            `INSERT INTO loginform.passwords VALUES(` +
               count +
               `, "` +
               generatedPass +

@@ -8,8 +8,17 @@ body {
 
 .input {
   margin-left: 43.3%;
+  float: left;
 }
 
 .messages {
+  text-align: center;
+}
+
+.send {
+  margin-left: 43.3%;
+}
+
+.logout {
   text-align: center;
 }

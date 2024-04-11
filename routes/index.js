@@ -28,6 +28,7 @@ router.get("/", (req, res) => {
   // res.send("<h1>Welcome to /</h1>");
   // res.send("Welcome to /")
   res.sendFile(path.join(__dirname, "../index.html"));
+  // res.sendFile(path.join(__dirname, "../public/stylesheets/index.css"));
 });
 
 router.get("/login", (req, res) => {
